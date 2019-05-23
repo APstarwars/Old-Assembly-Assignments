@@ -3,6 +3,8 @@ extern int mulby4(int);
 extern void printXtimes(int, int);
 extern int getRandNum(int);
 extern int getMax(int, int, int, int, int, int);
+extern int getMin(int, int, int, int, int, int);
+extern int getAve(int, int, int, int, int, int);
 
 int main()
 {
@@ -38,6 +40,28 @@ int main()
     printf("%d\n", getMax(1,2,3,48,5,6));
     
 
+    printf("\nTAesting: getMin\n");
+
+    printf("%d\n", getMin(1,2,3,4,5,6));
+    printf("%d\n", getMin(7,12,3,4,5,6));
+    printf("%d\n", getMin(7,8,3,18,5,6));
+    printf("%d\n", getMin(24,8,9,4,5,6));
+    printf("%d\n", getMin(7,8,9,10,30,6));
+    printf("%d\n", getMin(7,8,9,10,11,36));
+    printf("%d\n", getMin(7,8,42,10,11,12));
+    printf("%d\n", getMin(10,20,30,48,50,60));
+
+
+    printf("\nTAesting: getAve\n");
+
+    printf("%d\n", getAve(10,20,30,40,50,60));
+    printf("%d\n", getAve(1,12,3,4,5,6));
+    printf("%d\n", getAve(1,2,3,18,5,6));
+    printf("%d\n", getAve(24,2,3,4,5,6));
+    printf("%d\n", getAve(1,2,3,4, 30,6));
+    printf("%d\n", getAve(1,2,3,4,5,36));
+    printf("%d\n", getAve(1,2,42,4,5,6));
+    printf("%d\n", getAve(1,2,3,48,5,6));
 
 }
 

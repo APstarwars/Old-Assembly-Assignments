@@ -11,6 +11,8 @@ extern  mulby4
 extern  printXtimes  
 extern  getRandNum
 extern  getMax
+extern  getMin
+extern  getAve
 
 ; Code 
 section     .text
@@ -111,6 +113,30 @@ _start:
     mov r8,     0x100
     mov r9,     0x100
     call    getMax 
+    call    printRAX
+    call    printEndl
+
+;-----------------------------------------------------------------------------------
+; test getMin
+    mov rdi,    0x100
+    mov rsi,    0x100
+    mov rdx,    0x103
+    mov rcx,    0x100
+    mov r8,     0x090
+    mov r9,     0x100
+    call    getMin 
+    call    printRAX
+    call    printEndl
+
+;-----------------------------------------------------------------------------------
+; test getAve
+    mov rdi,	0x0FE
+    mov rsi,	0x0FF
+    mov rdx,	0x100
+    mov rcx,	0x101
+    mov r8,	0x102
+    mov r9, 	0x103
+    call    getAve
     call    printRAX
     call    printEndl
 

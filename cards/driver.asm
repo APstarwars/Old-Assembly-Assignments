@@ -7,7 +7,7 @@ extern printEndl
 extern printByteArray
 extern exitNormal
 
-; propmts, all prompts are the same size but have trailing spaces
+; prompts, all prompts are the same size but have trailing spaces
 passPushPop	db	"PushAll and PopAll Passed                         "
 failPushPop	db	"PushAll or PopAll Failed                          "
 passDeck	db	"newDeck Passed                                    "
@@ -25,6 +25,7 @@ suits	db	"CDSH"
 ;------------------------------------------------------------------	
 ; Bss		.bss
 ;------------------------------------------------------------------	
+section		.bss
 deck	resb	52
 
 
@@ -45,7 +46,12 @@ section		.text
 ;
 ; return: 		n/a
 %macro	pushAll 0
-; your code goes here
+	push rax
+	push rbx
+	push rcx
+	push rdx
+	push rdi
+	push rsi
 %endmacro
 ;------------------------------------------------------------------	
 
@@ -56,11 +62,16 @@ section		.text
 ;
 ; postcondition: 	The following registers 
 ;			rax, rbx, rcx rdx, rdi and rsi 
-;			have been popped onto the stack
+;			have been popped off the stack
 ;
 ; return: 		n/a
 %macro	popAll 0
-; your code goes here
+	pop rsi
+	pop rdi
+	pop rdx
+	pop rcx
+	pop rbx
+	pop rax
 %endmacro
 ;------------------------------------------------------------------	
 
@@ -75,7 +86,14 @@ section		.text
 ;
 ; return:		n/a
 %macro	newDeck 1
-; your code goes here
+	pushAll
+	mov rbx, 0
+	%%deckLoop:
+		mov byte[%1+rbx], bl
+		inc rbx
+	cmp rbx, 52
+	jl %%deckLoop
+	popAll
 %endmacro
 ;------------------------------------------------------------------	
 
@@ -90,13 +108,23 @@ section		.text
 ; return:		n/a
 %macro	random 1
 	push rbx
+	push rcx
 	push rdx
-	rdrand rax
+	push rdi
+	push rsi
+	; push and pop everything except rax
+	; so we actually have a return value
+
+	call getRand
 	mov rbx, %1
 	div rbx
 	mov rax, rdx
 	inc rax
+
+	pop rsi
+	pop rdi
 	pop rdx
+	pop rcx
 	pop rbx
 %endmacro
 ;------------------------------------------------------------------	
@@ -130,7 +158,17 @@ section		.text
 ;
 ; return:		n/a
 %macro	displayValue 1
-; your code goes here
+	pushAll
+
+	mov rax, %1
+	xor rdx, rdx
+	mov rbx, 13
+	div rbx
+	lea rsi, [cards+rdx]
+	mov rdx, 1
+	call printByteArray
+
+	popAll
 %endmacro
 ;------------------------------------------------------------------	
 
@@ -152,12 +190,13 @@ section		.text
 	pushAll
 	
 	mov 	rax, %1	; place the card in rax
-	xor 	rdx, rdx	
+	xor	rdx, rdx
 	mov 	rbx, 0xd	; divide by 13
 	div 	rbx
 	lea	rsi, 	[suits+rax] ; print suit
 	mov	rdx,	0x1
 	call	printByteArray	
+
 	; restore state
 	popAll
 %endmacro

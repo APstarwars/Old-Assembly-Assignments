@@ -148,7 +148,7 @@ parameters:
 ;                   r9  the average of the numbers passed into the function 
 ;           
 ;
-; return            n/a 
+; return            n/a (returns the sum of all elements in the array in this case)
 ;-----------------------------------------------------------------------------------
 getStats:
    
@@ -224,7 +224,7 @@ getStats:
     ; ave
     push rdx
     mov rdx, 0x0
-    div rsi
+    div rsi ; you sly bastard
     mov qword[r9], rax ; set the return value for ave
     pop rdx
     
@@ -233,7 +233,7 @@ getStats:
     pop qword [rcx]     ; min
     pop qword [rdx]     ; max
    
-    mov rax, qword[r8]
+    mov rax, qword[r8]  ; this seems unnecessary
     
     ;epilogue
     pop r15
@@ -284,13 +284,14 @@ getStatsExtended:
 
     ;prologue
     ; push the rbp value to the stack
-    ;TBD 
+	push rbp
 
     ; save the stack pointer into rbp
-    ; TBD
+	mov rbp, rsp
 
     ; save any registers that will be used for calculations
-    ; TBD
+	push r14
+	push r15
      
     ; max
     mov r15, rsi ; set the counter to start at the last value in the array
@@ -310,7 +311,7 @@ getStatsExtended:
     jmp nextMaxE    
 
     MaxE:
-    push rax ; put the value on the stack to pick up later
+	mov qword[rdx], rax ; put the value in memory now because why wait?
 
     ; min
     mov r15, rsi ; set the counter to start at the last value in the array
@@ -331,7 +332,7 @@ getStatsExtended:
     jmp nextMinE
 
     MinE:
-    push rax ; put the value on the stack to pick up later
+	mov qword[rcx], rax ; put the value in memory now because why wait?
     
     ; sum
     mov r15, rsi ; set the counter to start at the last value in the array
@@ -348,7 +349,7 @@ getStatsExtended:
     jmp nextSumE
 
     SumE:
-    push rax ; put the value on the stack to pick up later
+	mov qword[r8], rax ; put the value in memory now because why wait?
     
     ; ave
     push rdx
@@ -356,24 +357,32 @@ getStatsExtended:
     div rsi
     mov qword[r9], rax ; set the return value for ave
     pop rdx
-    
-    ; pull values from the stack
-    pop qword [r8]      ; sum
-    pop qword [rcx]     ; min
-    pop qword [rdx]     ; max
   
     ; multiply min times max return in 7th parameter
-    ; TBD 
+	push rdx
+	mov rax, qword[rcx]
+	mov r15, qword[rdx]
+	xor rdx, rdx ; as a precaution
+	mul r15
+	mov r14, qword[rbp+16]
+	mov qword[r14], rax
     
     ; divide max by min return in 8th parameter
-    ; TBD
+	mov rax, r15
+	mov r15, qword[rcx]
+	xor rdx, rdx
+	div r15
+	mov r14, qword[rbp+24]
+	mov qword[r14], rax
+	pop rdx
 
     ;epilogue
     ; pop the saved registers
-    ; TBD
+	pop r15
+	pop r14
 
     ; pop the rbp
-    ; TBD
+	pop rbp
  
     ret
     

@@ -28,7 +28,7 @@ section		.text
 ; postcondition:	the value X is multiplied by 4
 ;				all registers are preserved, unless passed in as x
 ;return:			n/a
-%define   mulby4(x)  
+%define   mulby4(x)  shl x, 2
 ; Multi Line Macro format
 ;pa
 ;description:		prints the value of RAX using the printRAX function
@@ -37,6 +37,7 @@ section		.text
 ;				all registers are preserved
 ;return:			n/a
 %macro pa 0
+	call printRAX
 %endmacro	    
 
 ; Multi Line Macro with parameters
@@ -51,12 +52,12 @@ section		.text
  %macro pm 2
 	push 	rsi
 	push	rdx
-	mov 	rsi, 		%1
-	mov		rdx, 	%2
-	call 		printByteArray
-	call		printEndl
+	mov 	rsi, 	%1
+	mov	rdx, 	%2
+	call 	printByteArray
+	call	printEndl
 	pop 	rdx
-	pop		rsi
+	pop	rsi
 %endmacro	    
 
 ; Multi Line Macro with parameters
@@ -68,7 +69,10 @@ section		.text
 ;				all registers are preserved
 ;return:			n/a
 %macro pr 1
-	
+	push	rdi
+	mov 	rdi, %1
+	call 	printReg
+	pop 	rdi
 %endmacro	    
 
 ; Multi Line Macro with parameters and a label
@@ -83,7 +87,15 @@ section		.text
 ;				all registers are preserved
 ;return:			n/a
 %macro prXtimes 2
-
+	push	rcx
+	push 	rdi
+	mov	rcx,	%2
+	mov	rdi,	%1
+	%%printLoop:
+		call	printReg
+	loop %%printLoop
+	pop	rdi
+	pop	rcx
 %endmacro	    
 
 ; Multi Line Macro with parameters and a label
@@ -96,7 +108,13 @@ section		.text
 ;return:			rax has a random value between 0 and the passed in parameter
 
 %macro rand 1
-	
+	;rdrand	rax
+	call	getRand
+	xor	rdx, rdx
+	mov	rbx, %1
+	div	rbx
+	mov	rax, rdx
+	inc	rax
 %endmacro
 
 ;randP			
@@ -108,7 +126,19 @@ section		.text
 ;return:			rax has a random value between 0 and the passed in parameter
 
 %macro randA 1
-	
+	push	rbx
+	push	rdx
+
+	;rdrand	rax
+	call	getRand
+	xor	rdx, rdx
+	mov	rbx, %1
+	div	rbx
+	mov	rax, rdx
+	inc	rax
+
+	pop rdx
+	pop rbx
 %endmacro
 
 
@@ -124,7 +154,6 @@ _start:
 	call printMSG
 	call printEndl
 	
-jmp end
 ; ---------------------------------- test Multiply by 4	
 	pm	mMulby4,  [msgLen]
         mov rax, 0x1
@@ -132,18 +161,15 @@ jmp end
 	call printEndl
 	
 	mulby4(rax)
-	;call printRAX
 	pa
 	call printEndl
 	
 	
-jmp end	
 ; ---------------------------------- test Print Reg	
 	pm	mPr, [msgLen]
 	pr		rax	
 	call printEndl
 	
-jmp end
 ; ---------------------------------- test Print Reg x times	
 	pm	mPrX, [msgLen]
 
@@ -154,9 +180,8 @@ jmp end
 	call printEndl
 	
 	prXtimes	rax, 0x2, 
-	call 		printEndl
+	call printEndl
 	
-jmp end	
 ; ---------------------------------- test Random with Side Effects on RDX	
 	pm	mRand, [msgLen]
 	rand	0x20
@@ -180,7 +205,6 @@ jmp end
 	mov	rbx, 0xff
 	mov	rdx, 0xff
 
-jmp end
 ; ---------------------------------- test Random with no side effects on RDX	
 	pm	mRandA, [msgLen]
 
