@@ -1,0 +1,116 @@
+     1                                 %line 1+1 sortMVB.asm
+     2                                 
+     3                                 [section .data]
+     4                                 [extern printMSG]
+     5                                 [extern exitNormal]
+     6                                 [extern printRAX]
+     7                                 [extern printRBX]
+     8                                 [extern printRCX]
+     9                                 [extern printRDX]
+    10                                 [extern getByteArray]
+    11                                 [extern printByteArray]
+    12                                 [extern printEndl]
+    13                                 
+    14 00000000 456E74657220352043-    title db "Enter 5 Characters "
+    15 00000000 686172616374657273-
+    16 00000000 20                 
+    17 00000013 13                     titleSize db 0x13
+    18 00000014 5265766572736520       reverse db "Reverse "
+    19 0000001C 08                     reverseSize db 0x8
+    20 0000001D 536F727420             sort db "Sort "
+    21 00000022 05                     sortSize db 0x5
+    22 00000023 0500000000000000       numberOfBytes dq 0x5
+    23                                 
+    24                                 [section .bss]
+    25 00000000 <gap>                  array resb 5
+    26 00000005 <gap>                  reversed resb 5
+    27                                 
+    28                                 
+    29                                 [section .text]
+    30                                 
+    31                                 [global _start]
+    32                                 
+    33                                 _start:
+    34                                 
+    35 00000000 48C7C70D000000          mov rdi, 0xd
+    36 00000007 E8(F6FFFFFF)            call printMSG
+    37 0000000C 48C7C700000000          mov rdi, 0x0
+    38 00000013 E8(F6FFFFFF)            call printMSG
+    39                                 
+    40                                 
+    41 00000018 48C7C6[00000000]        mov rsi, title
+    42 0000001F 8A1425[00000000]        mov dl, [titleSize]
+    43 00000026 E8(F6FFFFFF)            call printByteArray
+    44 0000002B E8(F6FFFFFF)            call printEndl
+    45 00000030 4831F6                  xor rsi, rsi
+    46                                 
+    47 00000033 48C7C6[00000000]        mov rsi, array
+    48 0000003A 8A1425[00000000]        mov dl, [numberOfBytes]
+    49 00000041 E8(F6FFFFFF)            call getByteArray
+    50 00000046 E8(F6FFFFFF)            call printByteArray
+    51 0000004B E8(F6FFFFFF)            call printEndl
+    52                                 
+    53                                 
+    54 00000050 48C7C6[00000000]        mov rsi, reverse
+    55 00000057 8A1425[00000000]        mov dl, [reverseSize]
+    56 0000005E E8(F6FFFFFF)            call printByteArray
+    57 00000063 E8(F6FFFFFF)            call printEndl
+    58 00000068 4831F6                  xor rsi, rsi
+    59                                 
+    60 0000006B 4831C0                  xor rax, rax
+    61 0000006E 488B0C25[00000000]      mov rcx, [numberOfBytes]
+    62 00000076 48C7C300000000          mov rbx, 0
+    63                                  startLoop:
+    64 0000007D 8A83[00000000]          mov al, byte [array+rbx]
+    65 00000083 8881[FFFFFFFF]          mov byte [reversed+rcx-1], al
+    66 00000089 4831C0                  xor rax, rax
+    67 0000008C 48FFC3                  inc rbx
+    68 0000008F E2EA                    loop startLoop
+    69 00000091 4831DB                  xor rbx, rbx
+    70                                 
+    71 00000094 48C7C6[00000000]        mov rsi, reversed
+    72 0000009B 8A1425[00000000]        mov dl, [numberOfBytes]
+    73 000000A2 E8(F6FFFFFF)            call printByteArray
+    74 000000A7 E8(F6FFFFFF)            call printEndl
+    75 000000AC 4831F6                  xor rsi, rsi
+    76                                 
+    77                                 
+    78 000000AF 48C7C6[00000000]        mov rsi, sort
+    79 000000B6 8A1425[00000000]        mov dl, [sortSize]
+    80 000000BD E8(F6FFFFFF)            call printByteArray
+    81 000000C2 E8(F6FFFFFF)            call printEndl
+    82 000000C7 4831F6                  xor rsi, rsi
+    83                                 
+    84 000000CA 4831C0                  xor rax, rax
+    85 000000CD 4831DB                  xor rbx, rbx
+    86                                  sortLoop:
+    87 000000D0 4831D2                  xor rdx, rdx
+    88 000000D3 48C7C101000000          mov rcx, 1
+    89                                  compareLoop:
+    90 000000DA 8A81[FFFFFFFF]          mov al, byte [array+rcx-1]
+    91 000000E0 8A99[00000000]          mov bl, byte [array+rcx]
+    92 000000E6 38D8                    cmp al, bl
+    93 000000E8 7F2F                    jg swap
+    94                                  paws:
+    95 000000EA 48FFC1                  inc rcx
+    96 000000ED 483B0C25[00000000]      cmp rcx, [numberOfBytes]
+    97 000000F5 7CE1                    jl compareLoop
+    98 000000F7 4883FA00                cmp rdx, 0
+    99 000000FB 75D1                    jne sortLoop
+   100                                 
+   101 000000FD 48C7C6[00000000]        mov rsi, array
+   102 00000104 488B1425[00000000]      mov rdx, [numberOfBytes]
+   103 0000010C E8(F6FFFFFF)            call printByteArray
+   104 00000111 E8(F6FFFFFF)            call printEndl
+   105 00000116 4831F6                  xor rsi, rsi
+   106                                 
+   107 00000119 EB0F                    jmp exit
+   108                                  swap:
+   109 0000011B 8899[FFFFFFFF]          mov byte [array+rcx-1], bl
+   110 00000121 8881[00000000]          mov byte [array+rcx], al
+   111 00000127 48FFC2                  inc rdx
+   112 0000012A EBBC                    jmp paws
+   113                                 
+   114                                  exit:
+   115 0000012C 4831D2                  xor rdx, rdx
+   116 0000012F E8(F6FFFFFF)            call exitNormal

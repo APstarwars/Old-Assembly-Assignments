@@ -1,0 +1,110 @@
+     1                                 %line 1+1 kayak.asm
+     2                                 
+     3                                 [section .data]
+     4                                 [extern printMSG]
+     5                                 [extern exitNormal]
+     6                                 [extern getByteArray]
+     7                                 [extern printByteArray]
+     8                                 [extern printEndl]
+     9                                 
+    10 00000000 456E74657220612077-    prompt db "Enter a word, and I will tell you if it is a palindrome."
+    11 00000000 6F72642C20616E6420-
+    12 00000000 492077696C6C207465-
+    13 00000000 6C6C20796F75206966-
+    14 00000000 206974206973206120-
+    15 00000000 70616C696E64726F6D-
+    16 00000000 652E               
+    17 00000038 38                     promptSize db 56
+    18 00000039 497320612070616C69-    isMsg db "Is a palindrome."
+    19 00000039 6E64726F6D652E     
+    20 00000049 10                     isSize db 16
+    21 0000004A 4973206E6F74206120-    notMsg db "Is not a palindrome."
+    22 0000004A 70616C696E64726F6D-
+    23 0000004A 652E               
+    24 0000005E 14                     notSize db 20
+    25 0000005F 497320616E20656D70-    emptyMsg db "Is an empty string."
+    26 0000005F 747920737472696E67-
+    27 0000005F 2E                 
+    28 00000072 13                     emptySize db 19
+    29 00000073 19                     arraySize db 25
+    30                                 
+    31                                 [section .bss]
+    32 00000000 <gap>                  palindrome resb 25
+    33                                 
+    34                                 
+    35                                 [section .text]
+    36                                 
+    37                                 [global _start]
+    38                                 
+    39                                 _start:
+    40                                 
+    41 00000000 48C7C70D000000          mov rdi, 0xd
+    42 00000007 E8(F6FFFFFF)            call printMSG
+    43 0000000C 48C7C700000000          mov rdi, 0x0
+    44 00000013 E8(F6FFFFFF)            call printMSG
+    45                                 
+    46                                 
+    47 00000018 48C7C6[00000000]        mov rsi, prompt
+    48 0000001F 8A1425[00000000]        mov dl, [promptSize]
+    49 00000026 E8(F6FFFFFF)            call printByteArray
+    50 0000002B E8(F6FFFFFF)            call printEndl
+    51 00000030 4831F6                  xor rsi, rsi
+    52                                 
+    53 00000033 48C7C6[00000000]        mov rsi, palindrome
+    54 0000003A 8A1425[00000000]        mov dl, [arraySize]
+    55 00000041 E8(F6FFFFFF)            call getByteArray
+    56 00000046 E8(F6FFFFFF)            call printByteArray
+    57 0000004B E8(F6FFFFFF)            call printEndl
+    58 00000050 4831F6                  xor rsi, rsi
+    59                                 
+    60 00000053 803C25[00000000]0A      cmp byte [palindrome], 0x0a
+    61 0000005B 747A                    je emptyString
+    62                                 
+    63                                 
+    64 0000005D 4831C0                  xor rax, rax
+    65 00000060 48C7C100000000          mov rcx, 0
+    66                                  pushLoop:
+    67 00000067 8A81[00000000]          mov al, byte [palindrome+rcx]
+    68 0000006D 50                      push rax
+    69 0000006E 48FFC1                  inc rcx
+    70 00000071 80B9[00000000]0A        cmp byte [palindrome+rcx], 0x0a
+    71 00000078 75EB                    jne pushLoop
+    72                                 
+    73 0000007A 4831C0                  xor rax, rax
+    74 0000007D 48C7C100000000          mov rcx, 0
+    75                                  popLoop:
+    76 00000084 58                      pop rax
+    77 00000085 3A81[00000000]          cmp al, byte [palindrome+rcx]
+    78 0000008B 752D                    jne notPalindrome
+    79 0000008D 48FFC1                  inc rcx
+    80 00000090 80B9[00000000]0A        cmp byte [palindrome+rcx], 0x0a
+    81 00000097 75E9                    jne popLoop
+    82                                 
+    83 00000099 48C7C6[00000000]        mov rsi, isMsg
+    84 000000A0 8A1425[00000000]        mov dl, [isSize]
+    85 000000A7 E8(F6FFFFFF)            call printByteArray
+    86 000000AC E8(F6FFFFFF)            call printEndl
+    87 000000B1 4831F6                  xor rsi, rsi
+    88                                 
+    89 000000B4 4831C0                  xor rax, rax
+    90 000000B7 4831C9                  xor rcx, rcx
+    91 000000BA EB38                    jmp exit
+    92                                 
+    93                                  notPalindrome:
+    94 000000BC 48C7C6[00000000]        mov rsi, notMsg
+    95 000000C3 8A1425[00000000]        mov dl, [notSize]
+    96 000000CA E8(F6FFFFFF)            call printByteArray
+    97 000000CF E8(F6FFFFFF)            call printEndl
+    98 000000D4 4831F6                  xor rsi, rsi
+    99 000000D7 EB1B                    jmp exit
+   100                                 
+   101                                  emptyString:
+   102 000000D9 48C7C6[00000000]        mov rsi, emptyMsg
+   103 000000E0 8A1425[00000000]        mov dl, [emptySize]
+   104 000000E7 E8(F6FFFFFF)            call printByteArray
+   105 000000EC E8(F6FFFFFF)            call printEndl
+   106 000000F1 4831F6                  xor rsi, rsi
+   107 000000F4 EBFE                    jmp exit
+   108                                 
+   109                                  exit:
+   110 000000F6 E8(F6FFFFFF)            call exitNormal

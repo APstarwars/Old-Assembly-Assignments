@@ -1,0 +1,44 @@
+     1                                 %line 1+1 controlMVB.asm
+     2                                 
+     3                                 [section .data]
+     4                                 [extern printMSG]
+     5                                 [extern exitNormal]
+     6                                 [extern printRAX]
+     7                                 [extern printRBX]
+     8                                 [extern printRCX]
+     9                                 [extern printRDX]
+    10                                 [extern printEndl]
+    11                                 [extern getQuad]
+    12                                 
+    13                                 
+    14                                 [section .text]
+    15                                 
+    16                                 [global _start]
+    17                                 
+    18                                 _start:
+    19                                 
+    20 00000000 48C7C70D000000          mov rdi, 0xd
+    21 00000007 E8(F6FFFFFF)            call printMSG
+    22 0000000C E8(F6FFFFFF)            call printEndl
+    23                                 
+    24                                 
+    25 00000011 48C7C716000000          mov rdi, 0x16
+    26 00000018 E8(F6FFFFFF)            call printMSG
+    27 0000001D E8(F6FFFFFF)            call printEndl
+    28 00000022 E8(F6FFFFFF)            call getQuad
+    29 00000027 E8(F6FFFFFF)            call printRAX
+    30                                 
+    31                                 
+    32 0000002C 48BB00000000000000-     mov rbx, 0x8000000000000000
+    33 0000002C 80                 
+    34                                  startLoop:
+    35 00000036 4809D9                  or rcx, rbx
+    36 00000039 E8(F6FFFFFF)            call printRCX
+    37 0000003E 4821C1                  and rcx, rax
+    38 00000041 48D1EB                  shr rbx, 0x1
+    39 00000044 48FFC2                  inc rdx
+    40 00000047 4839C1                  cmp rcx, rax
+    41 0000004A 75E8                    jne startLoop
+    42 0000004C E8(F6FFFFFF)            call printRDX
+    43                                 
+    44 00000051 E8(F6FFFFFF)            call exitNormal

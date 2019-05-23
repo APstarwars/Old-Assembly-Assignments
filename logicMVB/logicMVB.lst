@@ -1,0 +1,95 @@
+     1                                 %line 1+1 logicMVB.asm
+     2                                 
+     3                                 [section .data]
+     4                                 [extern printMSG]
+     5                                 [extern exitNormal]
+     6                                 [extern printRAX]
+     7                                 [extern printRBX]
+     8                                 [extern printRCX]
+     9                                 [extern printRDX]
+    10                                 [extern printABCD]
+    11                                 
+    12                                 
+    13                                 [section .text]
+    14                                 
+    15                                 [global _start]
+    16                                 
+    17                                 _start:
+    18                                 
+    19 00000000 48C7C70D000000          mov rdi, 0xd
+    20 00000007 E8(F6FFFFFF)            call printMSG
+    21 0000000C 48C7C700000000          mov rdi, 0x0
+    22 00000013 E8(F6FFFFFF)            call printMSG
+    23                                 
+    24                                 
+    25 00000018 48C7C70E000000          mov rdi, 0xe
+    26 0000001F E8(F6FFFFFF)            call printMSG
+    27 00000024 48C7C700000000          mov rdi, 0x0
+    28 0000002B E8(F6FFFFFF)            call printMSG
+    29                                 
+    30 00000030 48B8A0A0A0A0000000-     mov rax, 0xa0a0a0a0
+    31 00000030 00                 
+    32 0000003A 48C7C30B0B0B0B          mov rbx, 0xb0b0b0b
+    33 00000041 4821D8                  and rax, rbx
+    34 00000044 E8(F6FFFFFF)            call printRAX
+    35                                 
+    36 00000049 48B8A0A0A0A0000000-     mov rax, 0xa0a0a0a0
+    37 00000049 00                 
+    38 00000053 48BBB0B0B0B0000000-     mov rbx, 0xb0b0b0b0
+    39 00000053 00                 
+    40 0000005D 4821D8                  and rax, rbx
+    41 00000060 E8(F6FFFFFF)            call printRAX
+    42                                 
+    43                                 
+    44 00000065 48C7C70F000000          mov rdi, 0xf
+    45 0000006C E8(F6FFFFFF)            call printMSG
+    46 00000071 48C7C700000000          mov rdi, 0x0
+    47 00000078 E8(F6FFFFFF)            call printMSG
+    48                                 
+    49 0000007D 48B8A0A0A0A0000000-     mov rax, 0xa0a0a0a0
+    50 0000007D 00                 
+    51 00000087 48C7C30B0B0B0B          mov rbx, 0xb0b0b0b
+    52 0000008E 4809D8                  or rax, rbx
+    53 00000091 E8(F6FFFFFF)            call printRAX
+    54                                 
+    55 00000096 48B8A0A0A0A0000000-     mov rax, 0xa0a0a0a0
+    56 00000096 00                 
+    57 000000A0 48BBB0B0B0B0000000-     mov rbx, 0xb0b0b0b0
+    58 000000A0 00                 
+    59 000000AA 4809D8                  or rax, rbx
+    60 000000AD E8(F6FFFFFF)            call printRAX
+    61                                 
+    62                                 
+    63 000000B2 48C7C710000000          mov rdi, 0x10
+    64 000000B9 E8(F6FFFFFF)            call printMSG
+    65 000000BE 48C7C700000000          mov rdi, 0x0
+    66 000000C5 E8(F6FFFFFF)            call printMSG
+    67                                 
+    68 000000CA 48B8A0A0A0A0000000-     mov rax, 0xa0a0a0a0
+    69 000000CA 00                 
+    70 000000D4 48C7C30B0B0B0B          mov rbx, 0xb0b0b0b
+    71 000000DB 4831D8                  xor rax, rbx
+    72 000000DE E8(F6FFFFFF)            call printRAX
+    73                                 
+    74 000000E3 48B8A0A0A0A0000000-     mov rax, 0xa0a0a0a0
+    75 000000E3 00                 
+    76 000000ED 48BBB0B0B0B0000000-     mov rbx, 0xb0b0b0b0
+    77 000000ED 00                 
+    78 000000F7 4831D8                  xor rax, rbx
+    79 000000FA E8(F6FFFFFF)            call printRAX
+    80                                 
+    81                                 
+    82 000000FF 48C7C711000000          mov rdi, 0x11
+    83 00000106 E8(F6FFFFFF)            call printMSG
+    84 0000010B 48C7C700000000          mov rdi, 0x0
+    85 00000112 E8(F6FFFFFF)            call printMSG
+    86                                 
+    87 00000117 48B8A0A0A0A0000000-     mov rax, 0xa0a0a0a0
+    88 00000117 00                 
+    89 00000121 48C7C30B0B0B0B          mov rbx, 0xb0b0b0b
+    90 00000128 48F7D0                  not rax
+    91 0000012B 48F7D3                  not rbx
+    92 0000012E E8(F6FFFFFF)            call printRAX
+    93 00000133 E8(F6FFFFFF)            call printRBX
+    94                                 
+    95 00000138 E8(F6FFFFFF)            call exitNormal
